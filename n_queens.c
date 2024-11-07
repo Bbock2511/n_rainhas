@@ -53,25 +53,40 @@ bool problema_nas_colunas(char tab[]) // exatamente uma em cada coluna
   return false;
 }
 
-bool problema_nas_diagonais(char tab[]) // no máximo uma em cada diagonal
+/* -X-- 
+   --X-
+   X---
+   ---X
+*/
+
+bool problema_nas_diagonais(char tab[])
 {
-  int nrainhas_main = 0, nrainhas_anti = 0;
 
-  // Verificar a diagonal principal (índices [0,0], [1,1], [2,2], [3,3])
-  for (int i = 0; i < 4; i++) {
-    if (tab[i * 4 + i] == 'X') nrainhas_main++;
-  }
-  
-  // Verificar a anti-diagonal (índices [0,3], [1,2], [2,1], [3,0])
-  for (int i = 0; i < 4; i++) {
-    if (tab[i * 4 + (3 - i)] == 'X') nrainhas_anti++;
-  }
+  int diagonais_descendo[7] = {0}; // Para diagonais de diferença de índices (i - j)
+  int diagonais_subindo[7] = {0};  // Para diagonais de soma de índices (i + j)
 
-  // Se houver mais de uma rainha em qualquer diagonal, retorna true (problema)
-  if (nrainhas_main > 1 || nrainhas_anti > 1) return true;
+    // Verificar todas as posições do tabuleiro
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (tab[i * 4 + j] == 'X') {
+                // Diagonais "descendo" (i - j): Índice 0 a 6
+                diagonais_descendo[i - j + 3]++; // Desloca para o intervalo [0..6]
 
-  // Se ambas as diagonais tiverem no máximo uma rainha, retorna false (sem problema)
-  return false;
+                // Diagonais "subindo" (i + j): Índice 0 a 6
+                diagonais_subindo[i + j]++; // Intervalo [0..6]
+            }
+        }
+    }
+
+    // Verificar se há mais de uma rainha em qualquer diagonal
+    for (int i = 0; i < 7; i++) {
+        if (diagonais_descendo[i] > 1 || diagonais_subindo[i] > 1) {
+            return true; // Problema: mais de uma rainha em uma diagonal
+        }
+    }
+
+    // Se não houver problema em nenhuma diagonal
+    return false;
 }
 
 bool nrainhas(char tab[])
@@ -89,14 +104,8 @@ int main()
   else printf("NOK :(\n");
   if (nrainhas("-X----X--X----X-")) printf("OK :)\n");
   else printf("NOK :(\n");
-  if (nrainhas("-X--X-X--------X")) printf("OK :)\n");
+  if (nrainhas("-X--X-----X----X")) printf("OK :)\n");
   else printf("NOK :(\n");
-  if (nrainhas("-X----X-X------X")) printf("OK :)\n");
+  if (nrainhas("X----X----X----X")) printf("OK :)\n");
   else printf("Não OK :(\n");
 }
-
-/* -*-- 
-   --*-
-   *---
-   ---*
-*/
